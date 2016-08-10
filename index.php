@@ -1,5 +1,11 @@
 <?php
-//set_time_limit(100);
+
+/**
+ * Register Auto Loader
+ */
+
+require __DIR__ . '/vendor/autoload.php';
+
 const IMG_DIR = __DIR__ . "/bilet/img/";
 const TEXT_DIR = __DIR__ . "/bilet/txt/";
 const IN_CHARSET = "windows-1251";
@@ -8,8 +14,8 @@ $billet_arr = [];
 
 //Извлекаем из директории файлы
 foreach (getFile(TEXT_DIR) as $item) {
-    //Разбиваем файл на строки
 
+    //Разбиваем файл на строки
     $filename = $item->getBasename();
 
     $bilet = (int)substr($filename, 0, 2);
@@ -20,7 +26,6 @@ foreach (getFile(TEXT_DIR) as $item) {
         'bilet' => $bilet,
         'vopros' => $vopros,
         'correct_answer' => (int)$item->current(),
-
     ];
     $item->next();
     $billet_arr[$key]['questions'] = clearLine($item->current());
@@ -33,9 +38,10 @@ foreach (getFile(TEXT_DIR) as $item) {
         $item->next();
     }
     $item->next();
-    $billet_arr[$key]['comment'] = clearLine($item->current());
+    //Удаляем номер билета из начала комментария
+    $billet_arr[$key]['comment'] = clearLine(substr($item->current(), 1 + strpos($item->current(), ' ')));
 }
-
+ksort($billet_arr);
 var_dump($billet_arr);
 
 function getFile($dir)
