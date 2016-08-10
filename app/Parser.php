@@ -40,8 +40,10 @@ class Parser
             //Разбиваем файл на строки
             $filename = $file->getBasename();
 
-            $bilet = (int)substr($filename, 0, 2);
-            $vopros = (int)substr($filename, 2, 2);
+            $bilet_str = substr($filename, 0, 2);
+            $vopros_str = substr($filename, 2, 2);
+            $bilet = (int)$bilet_str;
+            $vopros = (int)$vopros_str;
             $key = ($bilet - 1) * 20 + $vopros;
             //Заполняем массив $this->billet_arr
             $this->billet_arr[$key] = [
@@ -63,6 +65,9 @@ class Parser
             //Удаляем номер билета из начала комментария если он там есть
             $flag_g = (((string)($this->billet_arr[$key]['vopros']) . ". ") == substr($file->current(), 0, 1 + strpos($file->current(), ' '))) ? TRUE : FALSE;
             $this->billet_arr[$key]['comment'] = $this->clearLine($file->current(), $flag_g);
+            //Формируем имя файла картинки Pdd_01_02.jpg
+            $file_img = "Pdd_" . $bilet_str . "_" . $vopros_str . ".jpg";
+            $this->billet_arr[$key]['images'] = file_exists(Config::IMG_DIR . $file_img)?$file_img:'text.gif';
         }
         ksort($this->billet_arr);
         return $this->billet_arr;
@@ -98,5 +103,4 @@ class Parser
         }
         return iconv(Config::IN_CHARSET, Config::OUT_CHARSET, preg_replace('/\\r\\n?|\\n/', '', $line));
     }
-
 }
