@@ -21,39 +21,44 @@ class Parser
 
     public function run()
     {
+        return $this->fileToArray();
+    }
 
+
+    public function fileToArray(): array
+    {
         //Извлекаем из директории файлы
-        foreach ($this->getFile(Config::TEXT_DIR) as $item) {
+        foreach ($this->getFile(Config::TEXT_DIR) as $file) {
 
             //Разбиваем файл на строки
-            $filename = $item->getBasename();
+            $filename = $file->getBasename();
 
             $bilet = (int)substr($filename, 0, 2);
             $vopros = (int)substr($filename, 2, 2);
             $key = ($bilet - 1) * 20 + $vopros;
-
+            //Заполняем массив $this->billet_arr
             $this->billet_arr[$key] = [
                 'bilet' => $bilet,
                 'vopros' => $vopros,
-                'correct_answer' => (int)$item->current(),
+                'correct_answer' => (int)$file->current(),
             ];
-            $item->next();
-            $this->billet_arr[$key]['questions'] = $this->clearLine($item->current());
-            $item->next();
+            $file->next();
+            $this->billet_arr[$key]['questions'] = $this->clearLine($file->current());
+            $file->next();
             $this->billet_arr[$key]['answers'] = '';
 
-            while ($item->valid()) {
-                if ($this->clearLine($item->current()) == '*') break;
-                $this->billet_arr[$key]['answers'] = $this->billet_arr[$key]['answers'] . $this->clearLine($item->current()) . "|";
-                $item->next();
+            while ($file->valid()) {
+                if ($this->clearLine($file->current()) == '*') break;
+                $this->billet_arr[$key]['answers'] = $this->billet_arr[$key]['answers'] . $this->clearLine($file->current()) . "|";
+                $file->next();
             }
-            $item->next();
-            //Удаляем номер билета из начала комментария
-            $this->billet_arr[$key]['comment'] = $this->clearLine(substr($item->current(), 1 + strpos($item->current(), ' ')));
+            $file->next();
+            //Удаляем номер билета из начала комментария если он там есть
+            $flag_g = (((string)($this->billet_arr[$key]['vopros']) . ". ") == substr($file->current(), 0, 1 + strpos($file->current(), ' '))) ? TRUE : FALSE;
+            $this->billet_arr[$key]['comment'] = $this->clearLine($file->current(), $flag_g);
         }
         ksort($this->billet_arr);
         return $this->billet_arr;
-
     }
 
     /**
@@ -73,13 +78,18 @@ class Parser
     }
 
     /**
-     * Clears the line from the transfer of symbols and encodes
+     * Clears the line from the garbage, the transfer of symbols and encodes
      *
      * @param $line
+     * @param bool $comment
      * @return string
      */
-    public function clearLine($line)
+    public function clearLine($line, $comment = FALSE)
     {
+        if ($comment) {
+            $line = substr($line, 1 + strpos($line, ' '));
+        }
         return iconv(Config::IN_CHARSET, Config::OUT_CHARSET, preg_replace('/\\r\\n?|\\n/', '', $line));
     }
+
 }
