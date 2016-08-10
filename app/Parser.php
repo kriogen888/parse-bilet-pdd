@@ -19,13 +19,20 @@ class Parser
         return Config::VERSION;
     }
 
+    /**
+     * Method run()
+     * @return array
+     */
     public function run()
     {
         return $this->fileToArray();
     }
 
-
-    public function fileToArray(): array
+    /**
+     * Parse the file line by line and fill the array $billet_arr
+     * @return array
+     */
+    private function fileToArray(): array
     {
         //Извлекаем из директории файлы
         foreach ($this->getFile(Config::TEXT_DIR) as $file) {
@@ -67,7 +74,7 @@ class Parser
      * @param $dir
      * @return \Generator
      */
-    public function getFile($dir)
+    private function getFile($dir)
     {
         $dir_iterator = new DirectoryIterator($dir);
         foreach ($dir_iterator as $item) {
@@ -84,7 +91,7 @@ class Parser
      * @param bool $comment
      * @return string
      */
-    public function clearLine($line, $comment = FALSE)
+    private function clearLine($line, $comment = FALSE)
     {
         if ($comment) {
             $line = substr($line, 1 + strpos($line, ' '));
