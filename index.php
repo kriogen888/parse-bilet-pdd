@@ -6,6 +6,9 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
+$app = new \App\Parser();
+echo $app->version();
+
 const IMG_DIR = __DIR__ . "/bilet/img/";
 const TEXT_DIR = __DIR__ . "/bilet/txt/";
 const IN_CHARSET = "windows-1251";
