@@ -3,7 +3,10 @@
 namespace App;
 
 
+use App\Config\Config;
+use App\Config\DBConfig;
 use DirectoryIterator;
+use PDO;
 use SplFileObject;
 
 class Parser
@@ -67,7 +70,7 @@ class Parser
             $this->billet_arr[$key]['comment'] = $this->clearLine($file->current(), $flag_g);
             //Формируем имя файла картинки Pdd_01_02.jpg
             $file_img = "Pdd_" . $bilet_str . "_" . $vopros_str . ".jpg";
-            $this->billet_arr[$key]['images'] = file_exists(Config::IMG_DIR . $file_img)?$file_img:'text.gif';
+            $this->billet_arr[$key]['images'] = file_exists(Config::IMG_DIR . $file_img) ? $file_img : 'text.gif';
         }
         ksort($this->billet_arr);
         return $this->billet_arr;
@@ -102,5 +105,14 @@ class Parser
             $line = substr($line, 1 + strpos($line, ' '));
         }
         return iconv(Config::IN_CHARSET, Config::OUT_CHARSET, preg_replace('/\\r\\n?|\\n/', '', $line));
+    }
+
+    public function DB()
+    {
+        foreach (PDO::getAvailableDrivers() as $driver) {
+            echo $driver . "<br>";
+        }
+        $db = new PDO('mysql:host=' . DBConfig::HOST_REMOTE_DB . ';dbname=' . DBConfig::LOGIN_REMOTE_DB, DBConfig::LOGIN_REMOTE_DB, DBConfig::PASSWORD_REMOTE_DB);
+        var_dump($db);
     }
 }

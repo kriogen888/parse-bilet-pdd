@@ -2,3 +2,4 @@ bilet/
 composer.phar
 /vendor/
 composer.lock
+/app/config/DBConfig.php
