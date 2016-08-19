@@ -11,7 +11,40 @@ use SplFileObject;
 
 class Parser
 {
+    /**
+     * Connect to remote DB
+     * @var
+     */
+
+    private $remote_db;
+    /**
+     * Connect to local DB
+     * @var
+     */
+
+    private $local_db;
+    /**
+     * Array of questions
+     * @var array
+     */
+
     private $billet_arr = [];
+
+    /**
+     * Array of old DB question
+     * @var array
+     */
+
+    private $old_billet_arr = [];
+
+    /**
+     * Parser constructor.
+     */
+    public function __construct()
+    {
+        $this->remote_db = new PDO('mysql:host=' . DBConfig::HOST_REMOTE_DB . ';dbname=' . DBConfig::NAME_REMOTE_DB, DBConfig::LOGIN_REMOTE_DB, DBConfig::PASSWORD_REMOTE_DB);
+        $this->local_db = new PDO('mysql:host=' . DBConfig::HOST_LOCAL_DB . ';dbname=' . DBConfig::NAME_LOCAL_DB, DBConfig::LOGIN_LOCAL_DB, DBConfig::PASSWORD_LOCAL_DB);
+    }
 
     /**
      * Get the version number of the application.
@@ -109,10 +142,11 @@ class Parser
 
     public function DB()
     {
-        foreach (PDO::getAvailableDrivers() as $driver) {
-            echo $driver . "<br>";
-        }
-        $db = new PDO('mysql:host=' . DBConfig::HOST_REMOTE_DB . ';dbname=' . DBConfig::LOGIN_REMOTE_DB, DBConfig::LOGIN_REMOTE_DB, DBConfig::PASSWORD_REMOTE_DB);
-        var_dump($db);
+        $sql = "SELECT id, bilet, vopros, tema FROM pdd_bilet ORDER BY id";
+        $sth = $this->remote_db->query($sql);
+        $arr_vopros = $sth->fetchAll();
+
+
+        var_dump($arr_vopros[0]['tema']);
     }
 }
