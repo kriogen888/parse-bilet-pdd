@@ -44,6 +44,7 @@ class Parser
     {
         $this->remote_db = new PDO('mysql:host=' . DBConfig::HOST_REMOTE_DB . ';dbname=' . DBConfig::NAME_REMOTE_DB, DBConfig::LOGIN_REMOTE_DB, DBConfig::PASSWORD_REMOTE_DB);
         $this->local_db = new PDO('mysql:host=' . DBConfig::HOST_LOCAL_DB . ';dbname=' . DBConfig::NAME_LOCAL_DB, DBConfig::LOGIN_LOCAL_DB, DBConfig::PASSWORD_LOCAL_DB);
+        $this->local_db->exec("set names cp1251");
     }
 
     /**
@@ -146,7 +147,8 @@ class Parser
         if ($comment) {
             $line = substr($line, 1 + strpos($line, ' '));
         }
-        return iconv(Config::IN_CHARSET, Config::OUT_CHARSET, preg_replace('/\\r\\n?|\\n/', '', $line));
+        return preg_replace('/\\r\\n?|\\n/', '', $line);
+//        return iconv(Config::IN_CHARSET, Config::OUT_CHARSET, preg_replace('/\\r\\n?|\\n/', '', $line));
     }
 
 
