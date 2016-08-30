@@ -57,18 +57,25 @@ class Parser
 
     /**
      * Method run()
-     * @return array
+     *
      */
     public function run()
     {
-        return $this->fileToArray();
+        //Заносим в свойства массив из удаленной (старые билеты) базы данных
+        $this->getRemoteDB();
+//        var_dump($this->old_billet_arr);
+        //Заносим в свойства массив из исходных файлов (новые билеты)
+        $this->fileToArray();
+//        var_dump($this->billet_arr);
+
+        $new_bilet_array = $this->mergeArray();
     }
+
 
     /**
      * Parse the file line by line and fill the array $billet_arr
-     * @return array
      */
-    private function fileToArray(): array
+    private function fileToArray()
     {
         //Извлекаем из директории файлы
         foreach ($this->getFile(Config::TEXT_DIR) as $file) {
@@ -80,7 +87,7 @@ class Parser
             $vopros_str = substr($filename, 2, 2);
             $bilet = (int)$bilet_str;
             $vopros = (int)$vopros_str;
-            $key = ($bilet - 1) * 20 + $vopros;
+            $key = (($bilet - 1) * 20 + $vopros) - 1;
             //Заполняем массив $this->billet_arr
             $this->billet_arr[$key] = [
                 'bilet' => $bilet,
@@ -106,7 +113,7 @@ class Parser
             $this->billet_arr[$key]['images'] = file_exists(Config::IMG_DIR . $file_img) ? $file_img : 'text.gif';
         }
         ksort($this->billet_arr);
-        return $this->billet_arr;
+        return;
     }
 
     /**
@@ -140,16 +147,35 @@ class Parser
         return iconv(Config::IN_CHARSET, Config::OUT_CHARSET, preg_replace('/\\r\\n?|\\n/', '', $line));
     }
 
+
     /**
-     * Returns an array of remote database
-     * @return array
+     * Fills an array of remote database
      */
-    public function getRemoteDB():array
+    private function getRemoteDB()
     {
         $sql = "SELECT id, bilet, vopros, tema, tema_dop FROM pdd_bilet ORDER BY id";
         $sth = $this->remote_db->query($sql);
-        $this->old_billet_arr = $sth->fetchAll();
+        $this->old_billet_arr = $sth->fetchAll(PDO::FETCH_ASSOC);
 
-        return $this->old_billet_arr;
+        return;
+    }
+
+    /**
+     * Merge old_bilet and new_bilet arrays
+     * @return array
+     */
+    private function mergeArray():array
+    {
+        $result_array = [];
+        $i = 0;
+        while ($i < 800) {
+            if ($this->billet_arr[$i]['bilet'] == $this->old_billet_arr[$i]['bilet'] && $this->billet_arr[$i]['vopros'] == $this->old_billet_arr[$i]['vopros']) {
+                $result_array[$i] = array_merge($this->old_billet_arr[$i], $this->billet_arr[$i]);
+            }
+            $i++;
+        }
+
+        return $result_array;
+
     }
 }
