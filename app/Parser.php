@@ -140,13 +140,16 @@ class Parser
         return iconv(Config::IN_CHARSET, Config::OUT_CHARSET, preg_replace('/\\r\\n?|\\n/', '', $line));
     }
 
-    public function DB()
+    /**
+     * Returns an array of remote database
+     * @return array
+     */
+    public function getRemoteDB():array
     {
-        $sql = "SELECT id, bilet, vopros, tema FROM pdd_bilet ORDER BY id";
+        $sql = "SELECT id, bilet, vopros, tema, tema_dop FROM pdd_bilet ORDER BY id";
         $sth = $this->remote_db->query($sql);
-        $arr_vopros = $sth->fetchAll();
+        $this->old_billet_arr = $sth->fetchAll();
 
-
-        var_dump($arr_vopros[0]['tema']);
+        return $this->old_billet_arr;
     }
 }
