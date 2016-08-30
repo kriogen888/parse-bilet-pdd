@@ -47,7 +47,12 @@ class DBConfig
     const PASSWORD_LOCAL_DB = '';
 
     /**
-     * Name local DB
+     * Name old billet DB
+     */
+    const NAME_OLD_DB_BILLET = '';
+
+    /**
+     * Name new billet DB
      */
     const NAME_NEW_DB_BILLET = '';
 

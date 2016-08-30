@@ -153,7 +153,8 @@ class Parser
      */
     private function getRemoteDB()
     {
-        $sql = "SELECT id, bilet, vopros, tema, tema_dop FROM pdd_bilet ORDER BY id";
+        $table_name = DBConfig::NAME_OLD_DB_BILLET;
+        $sql = "SELECT id, bilet, vopros, tema, tema_dop FROM {$table_name} ORDER BY id";
         $sth = $this->remote_db->query($sql);
         $this->old_billet_arr = $sth->fetchAll(PDO::FETCH_ASSOC);
 
@@ -172,7 +173,7 @@ class Parser
             if ($this->billet_arr[$i]['bilet'] == $this->old_billet_arr[$i]['bilet'] && $this->billet_arr[$i]['vopros'] == $this->old_billet_arr[$i]['vopros']) {
                 $result_array[$i] = array_merge($this->old_billet_arr[$i], $this->billet_arr[$i]);
             }
-//            var_dump($result_array[$i]);
+            var_dump($result_array[$i]);
             $i++;
         }
 
@@ -180,7 +181,19 @@ class Parser
 
     }
 
-    private function setDBNewBilet(){
+    private function setDBNewBilet()
+    {
+        $table_name = DBConfig::NAME_NEW_DB_BILLET;
+        $stmt = $this->local_db->prepare("INSERT INTO {$table_name} (bilet,vopros,tema,images,questions,answers,correct_answer,comment,tema_dop) VALUES (:bilet,:vopros,:tema,:images,:questions,:answers,:correct_answer,:comment,:tema_dop)");
+        $stmt->bindParam(':bilet', $bilet);
+        $stmt->bindParam(':vopros', $vopros);
+        $stmt->bindParam(':tema', $tema);
+        $stmt->bindParam(':images', $images);
+        $stmt->bindParam(':questions', $questions);
+        $stmt->bindParam(':answers', $answers);
+        $stmt->bindParam(':correct_answer', $correct_answer);
+        $stmt->bindParam(':comment', $comment);
+        $stmt->bindParam(':tema_dop', $tema_dop);
 
     }
 }
