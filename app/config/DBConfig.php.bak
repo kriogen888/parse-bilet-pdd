@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Config;
+
+
+class DBConfig
+{
+    /**
+     * Host remote DB
+     */
+    const HOST_REMOTE_DB = '';
+
+    /**
+     * Name remote DB
+     */
+    const NAME_REMOTE_DB = '';
+
+    /**
+     * Login remote DB
+     */
+    const LOGIN_REMOTE_DB = '';
+
+    /**
+     * Password remote DB
+     */
+    const PASSWORD_REMOTE_DB = '';
+
+
+    /**
+     * Host local DB
+     */
+    const HOST_LOCAL_DB = '';
+
+    /**
+     * Name local DB
+     */
+    const NAME_LOCAL_DB = '';
+
+    /**
+     * Login local DB
+     */
+    const LOGIN_LOCAL_DB = '';
+
+    /**
+     * Password local DB
+     */
+    const PASSWORD_LOCAL_DB = '';
+
+    /**
+     * Name local DB
+     */
+    const NAME_NEW_DB_BILLET = '';
+
+}

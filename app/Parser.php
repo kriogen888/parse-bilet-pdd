@@ -172,10 +172,15 @@ class Parser
             if ($this->billet_arr[$i]['bilet'] == $this->old_billet_arr[$i]['bilet'] && $this->billet_arr[$i]['vopros'] == $this->old_billet_arr[$i]['vopros']) {
                 $result_array[$i] = array_merge($this->old_billet_arr[$i], $this->billet_arr[$i]);
             }
+//            var_dump($result_array[$i]);
             $i++;
         }
 
         return $result_array;
+
+    }
+
+    private function setDBNewBilet(){
 
     }
 }
