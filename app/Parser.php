@@ -69,6 +69,8 @@ class Parser
 //        var_dump($this->billet_arr);
 
         $new_bilet_array = $this->mergeArray();
+
+        $this->setDBNewBilet($new_bilet_array);
     }
 
 
@@ -181,7 +183,7 @@ class Parser
 
     }
 
-    private function setDBNewBilet()
+    private function setDBNewBilet($new_bilet_array)
     {
         $table_name = DBConfig::NAME_NEW_DB_BILLET;
         $stmt = $this->local_db->prepare("INSERT INTO {$table_name} (bilet,vopros,tema,images,questions,answers,correct_answer,comment,tema_dop) VALUES (:bilet,:vopros,:tema,:images,:questions,:answers,:correct_answer,:comment,:tema_dop)");
@@ -194,6 +196,20 @@ class Parser
         $stmt->bindParam(':correct_answer', $correct_answer);
         $stmt->bindParam(':comment', $comment);
         $stmt->bindParam(':tema_dop', $tema_dop);
+
+        foreach ($new_bilet_array as $new_vopros) {
+            $bilet = $new_vopros['bilet'];
+            $vopros = $new_vopros['vopros'];
+            $tema = $new_vopros['tema'];
+            $images = $new_vopros['images'];
+            $questions = $new_vopros['questions'];
+            $answers = $new_vopros['answers'];
+            $correct_answer = $new_vopros['correct_answer'];
+            $comment = $new_vopros['comment'];
+            $tema_dop = $new_vopros['tema_dop'];
+
+            if (!$stmt->execute()) die('Error! Insert to DB');
+        }
 
     }
 }
