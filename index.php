@@ -7,7 +7,10 @@ require __DIR__ . '/vendor/autoload.php';
 
 $app = new \App\Parser();
 
-$billet_arr =  $app->run();
+$billet_arr =  $app->createNewDB();
+
+//$billet_arr =  $app->run();
+
 //var_dump($billet_arr);
 
 

@@ -64,14 +64,34 @@ class Parser
     {
         //Заносим в свойства массив из удаленной (старые билеты) базы данных
         $this->getRemoteDB();
-//        var_dump($this->old_billet_arr);
         //Заносим в свойства массив из исходных файлов (новые билеты)
         $this->fileToArray();
-//        var_dump($this->billet_arr);
 
         $new_bilet_array = $this->mergeArray();
 
         $this->setDBNewBilet($new_bilet_array);
+    }
+
+    public function createNewDB()
+    {
+        $table_name = DBConfig::NAME_NEW_DB_BILLET;
+//        $res = $this->tableExists('pdd_bilet4');
+        $res = $this->tableExists($table_name);
+
+        var_dump($res);
+        return;
+    }
+
+    /**
+     * Check exists of the table
+     * @param $table_name
+     * @return bool
+     */
+    private function tableExists($table_name):bool
+    {
+        $res = $this->local_db->query("SHOW TABLES LIKE '$table_name'");
+        return (boolean)($res->rowCount());
+
     }
 
 
@@ -185,6 +205,10 @@ class Parser
 
     }
 
+    /**
+     * Fill a database table
+     * @param $new_bilet_array
+     */
     private function setDBNewBilet($new_bilet_array)
     {
         $table_name = DBConfig::NAME_NEW_DB_BILLET;
