@@ -38,6 +38,12 @@ class Parser
     private $old_billet_arr = [];
 
     /**
+     * New table name local
+     * @var
+     */
+    private $local_table_name;
+
+    /**
      * Parser constructor.
      */
     public function __construct()
@@ -62,6 +68,8 @@ class Parser
      */
     public function run()
     {
+        //Создаем новую таблицу в локальной базе данных
+        $this->local_table_name = $this->createNewDB();
         //Заносим в свойства массив из удаленной (старые билеты) базы данных
         $this->getRemoteDB();
         //Заносим в свойства массив из исходных файлов (новые билеты)
@@ -70,16 +78,51 @@ class Parser
         $new_bilet_array = $this->mergeArray();
 
         $this->setDBNewBilet($new_bilet_array);
+        return $this->local_table_name;
     }
 
-    public function createNewDB()
+    /**
+     * Create new table in DB
+     * @return string
+     */
+    private function createNewDB()
     {
-        $table_name = DBConfig::NAME_NEW_DB_BILLET;
-//        $res = $this->tableExists('pdd_bilet4');
-        $res = $this->tableExists($table_name);
+        $table_name = $this->nonExistsTableName(DBConfig::NAME_NEW_DB_BILLET);
 
-        var_dump($res);
-        return;
+        $sql = "
+          CREATE TABLE $table_name (
+            id INT(11) NOT NULL AUTO_INCREMENT,
+            bilet INT(3) NOT NULL,
+            vopros INT(3) NOT NULL,
+            tema INT(3) NOT NULL,
+            images TINYTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+            questions TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+            answers TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+            correct_answer INT(3) NOT NULL,
+            comment TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+            tema_dop INT(3) DEFAULT NULL,
+            PRIMARY KEY (id)
+          );
+        ";
+
+        $this->local_db->exec($sql);
+
+        return $table_name;
+    }
+
+    /**
+     * Searching for a new non-existing table name
+     * @param $table_name
+     * @return string
+     */
+    private function nonExistsTableName($table_name)
+    {
+        $name_prefix = 1;
+        while ($this->tableExists($table_name)) {
+            $table_name = DBConfig::NAME_NEW_DB_BILLET . "_" . $name_prefix;
+            $name_prefix++;
+        }
+        return $table_name;
     }
 
     /**
@@ -211,8 +254,8 @@ class Parser
      */
     private function setDBNewBilet($new_bilet_array)
     {
-        $table_name = DBConfig::NAME_NEW_DB_BILLET;
-        $stmt = $this->local_db->prepare("INSERT INTO {$table_name} (bilet,vopros,tema,images,questions,answers,correct_answer,comment,tema_dop) VALUES (:bilet,:vopros,:tema,:images,:questions,:answers,:correct_answer,:comment,:tema_dop)");
+//        $table_name = $this->local_table_name;
+        $stmt = $this->local_db->prepare("INSERT INTO {$this->local_table_name} (bilet,vopros,tema,images,questions,answers,correct_answer,comment,tema_dop) VALUES (:bilet,:vopros,:tema,:images,:questions,:answers,:correct_answer,:comment,:tema_dop)");
         $stmt->bindParam(':bilet', $bilet);
         $stmt->bindParam(':vopros', $vopros);
         $stmt->bindParam(':tema', $tema);

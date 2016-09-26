@@ -10,7 +10,7 @@ class Config
      *
      * @var string
      */
-    const VERSION = '0.1';
+    const VERSION = '0.2';
     /**
      * IMG Directory
      *
