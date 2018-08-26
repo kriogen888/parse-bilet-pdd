@@ -16,13 +16,13 @@ class Config
      *
      * @var string
      */
-    const IMG_DIR = __DIR__ . "/../../bilet/img/";
+    const IMG_DIR = __DIR__ . "/../../bilet/cd/img/";
     /**
      * TXT Directory
      *
      * @var string
      */
-    const TEXT_DIR = __DIR__ . "/../../bilet/txt/";
+    const TEXT_DIR = __DIR__ . "/../../bilet/cd/txt/";
     /**
      * Charset txt file
      *

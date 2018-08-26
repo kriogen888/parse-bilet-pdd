@@ -3,7 +3,7 @@
 namespace App\Config;
 
 
-class DBConfig
+class DBConfig_bak
 {
     /**
      * Host remote DB

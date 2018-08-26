@@ -11,7 +11,9 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "php": ">=5.5.9"
+    "php": ">=7.0",
+    "ext-PDO": "*",
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": {
