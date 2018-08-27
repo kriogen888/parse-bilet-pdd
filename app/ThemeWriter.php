@@ -5,8 +5,11 @@ namespace App;
 
 class ThemeWriter
 {
+    private $_themeList;
+
     public function __construct()
     {
+        $this->_themeList = new ThemeList('ab');
     }
 
     public function writeToFile()
@@ -17,7 +20,7 @@ class ThemeWriter
 //        dd($_SERVER, '$_SERVER');
 
 
-        dd(ThemeList::getList('ab'));
+        dd($this->_themeList->getList(), 'Темы:', 2);
 //        dd(ThemeList::getList('cd'));
 
 
