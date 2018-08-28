@@ -48,7 +48,7 @@ require __DIR__ . '/vendor/autoload.php';
 //var_dump($billet_arr);
 //print("Created $table_name Table.\n");
 
-$app = new \App\ThemeWriter();
+$app = new \App\Themes\ThemeWriter();
 $app->writeToFile();
 
 
