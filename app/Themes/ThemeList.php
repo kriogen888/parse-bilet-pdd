@@ -22,7 +22,9 @@ class ThemeList
         $line = $this->cleaningString($this->_srcThemeList);
         $line = json_decode($line);
         $this->themesListArray = $this->processor($line);
-        $this->saveToDBPrimaryThemes();
+        $this->db->setDBThemes($this->themesListArray);
+//        $this->saveToDBParentThemes();
+//        $this->saveToDBChildrenThemes($this->db->getParentThemes());
         return $this->themesListArray;
     }
 
@@ -67,20 +69,4 @@ class ThemeList
         }
         return $themeTitle;
     }
-
-    private function saveToDBPrimaryThemes()
-    {
-        $themePrimaryArray = [];
-        foreach ($this->themesListArray as $key => $item) {
-            $arr = [];
-            if (is_numeric($key)) {
-                $arr['_pid'] = 0;
-                $arr['title'] = $item[0];
-                $themePrimaryArray[] = $arr;
-            }
-        }
-        dd($themePrimaryArray, '$themePrimaryArray', 2);
-        $this->db->setDBThemes($themePrimaryArray);
-    }
-
 }

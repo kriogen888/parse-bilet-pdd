@@ -81,6 +81,7 @@ class DB
             $table_name = $this->themes_table_name . "_" . $name_prefix;
             $name_prefix++;
         }
+        $this->themes_table_name = $table_name;
         return $table_name;
     }
 
@@ -105,13 +106,31 @@ class DB
         $stmt->bindParam(':_pid', $_pid);
         $stmt->bindParam(':title', $title);
 
-        foreach ($themes_list_array as $theme) {
-            $_pid = $theme['_pid'];
-            $title = $theme['title'];
+        foreach ($themes_list_array as $key => $theme) {
+            if (is_numeric($key)) {
+                $_pid = 0;
+                $title = $theme[0];
+                if (!$stmt->execute()) die('Error! Insert to DB');
+
+                if (isset($theme[1])) $this->saveChildrenThemes($theme[1], $this->PDOObjectLocal->lastInsertId());
+            }
+        }
+    }
+
+    private function saveChildrenThemes($childrenThemes, $pid)
+    {
+        $stmt = $this->PDOObjectLocal->prepare("INSERT INTO {$this->themes_table_name} (_pid,title) VALUES (:_pid,:title)");
+        $stmt->bindParam(':_pid', $_pid);
+        $stmt->bindParam(':title', $title);
+
+        foreach ($childrenThemes as $item) {
+//            dd($item, '$item', 2);
+//            dd($pid, '$pid', 2);
+
+            $_pid = $pid;
+            $title = $item;
 
             if (!$stmt->execute()) die('Error! Insert to DB');
         }
-
     }
-
 }

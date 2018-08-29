@@ -21,7 +21,6 @@ class ThemeWriter
 
 
         dd($this->_themeList->getList(), 'Темы:', 2);
-//        dd(ThemeList::getList('cd'));
 
 
     }

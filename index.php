@@ -43,13 +43,10 @@ require __DIR__ . '/vendor/autoload.php';
 //$app = new \App\Parser();
 //echo $app->version();
 
-//$billet_arr =  $app->createNewDB();
-//$table_name =  $app->run();
-//var_dump($billet_arr);
-//print("Created $table_name Table.\n");
 
-$app = new \App\Themes\ThemeWriter();
-$app->writeToFile();
+//$app = new \App\Themes\ThemeWriter();
+//$app->writeToFile();
 
+echo "Настройки index";
 
 
