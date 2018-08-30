@@ -12,7 +12,7 @@ class ThemeWriter
         $this->_themeList = new ThemeList('ab');
     }
 
-    public function writeToFile()
+    public function getThemes()
     {
 //        dd($_REQUEST, '$_REQUEST');
 //        dd($_POST, '$_POST');
@@ -20,7 +20,9 @@ class ThemeWriter
 //        dd($_SERVER, '$_SERVER');
 
 
-        dd($this->_themeList->getList(), 'Темы:', 2);
+//        dd($this->_themeList->getThemesShortList(false), 'Список тем:', 2);
+
+        dd($this->_themeList->getThemes(true), 'Темы с билетами:', 2);
 
 
     }

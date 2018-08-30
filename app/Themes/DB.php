@@ -17,6 +17,7 @@ class DB
     ];
     private $PDOObjectLocal;
     private $themes_table_name = 'themes';
+    private $tickets_table_name = 'ab_tickets';
 
     public function __construct()
     {
@@ -124,13 +125,44 @@ class DB
         $stmt->bindParam(':title', $title);
 
         foreach ($childrenThemes as $item) {
-//            dd($item, '$item', 2);
-//            dd($pid, '$pid', 2);
-
             $_pid = $pid;
             $title = $item;
 
             if (!$stmt->execute()) die('Error! Insert to DB');
         }
+    }
+
+    public function setThemeToQuestion($list)
+    {
+        foreach ($list as $key => $item) {
+            $theme_id = $this->getThemeId($item[0]);
+            $this->saveThemeToQuestionToDB($item[1], $theme_id);
+        }
+    }
+
+    private function getThemeId($title)
+    {
+        $table_name = $this->themes_table_name;
+        $sql = "SELECT __id FROM {$table_name} WHERE title = '{$title}'";
+        $sth = $this->getPDOObject()->query($sql);
+        return $sth->fetchColumn();
+    }
+
+    private function saveThemeToQuestionToDB($questions, $theme_id)
+    {
+//        $stmt = $this->PDOObjectLocal->prepare("INSERT INTO {$this->themes_table_name} (_pid,title) VALUES (:_pid,:title)");
+
+        $stmt = $this->PDOObjectLocal->prepare("UPDATE {$this->tickets_table_name} SET `__ticket_new_theme_id` = CONCAT_WS('|', `__ticket_new_theme_id`, {$theme_id}) WHERE `bilet` = :biletNumber AND `vopros` = :questNumber");
+
+        $stmt->bindParam(':biletNumber', $biletNumber);
+        $stmt->bindParam(':questNumber', $questNumber);
+
+        foreach ($questions as $item) {
+            $biletNumber = $item->biletNumber;
+            $questNumber = $item->questNumber;
+
+            if (!$stmt->execute()) die('Error! Insert to DB');
+        }
+
     }
 }

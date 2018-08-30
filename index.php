@@ -44,9 +44,9 @@ require __DIR__ . '/vendor/autoload.php';
 //echo $app->version();
 
 
-//$app = new \App\Themes\ThemeWriter();
-//$app->writeToFile();
+$app = new \App\Themes\ThemeWriter();
+$app->getThemes();
 
-echo "Настройки index";
+//echo "Настройки index";
 
 

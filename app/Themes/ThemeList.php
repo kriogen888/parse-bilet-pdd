@@ -5,7 +5,7 @@ namespace App\Themes;
 class ThemeList
 {
     private $db;
-    private $_srcThemeList;
+    private $_srcThemesList;
     private $_isHeadTheme = null;
     private $themesListArray;
 
@@ -13,18 +13,46 @@ class ThemeList
     {
         $this->db = new DB();
         $category = ($category === 'cd') ? 'cd' : 'ab';
-        $this->_srcThemeList = file_get_contents(__DIR__ . '/files/theme_list_' . $category . '.txt');
+        $line = file_get_contents(__DIR__ . '/files/theme_list_' . $category . '.txt');
+        $line = $this->cleaningString($line);
+        $this->_srcThemesList = json_decode($line);
 
     }
 
-    public function getList()
+    public function getThemes($isSaveToDB = false)
     {
-        $line = $this->cleaningString($this->_srcThemeList);
-        $line = json_decode($line);
-        $this->themesListArray = $this->processor($line);
-        $this->db->setDBThemes($this->themesListArray);
-//        $this->saveToDBParentThemes();
-//        $this->saveToDBChildrenThemes($this->db->getParentThemes());
+        $list = $this->titleClearOfNumber($this->_srcThemesList);
+        if ($isSaveToDB) $this->db->setThemeToQuestion($list);
+        return $list;
+    }
+
+    private function titleClearOfNumber($themesList)
+    {
+        $unset = 0;
+        foreach ($themesList as $key => $item) {
+            $arr = explode(' ', $item[0], 2);
+            if (is_numeric($arr[0])) {
+                if ((int)$arr[0] !== 0) {
+                    $themesList[$key][0] = $arr[1];
+                } else {
+                    unset($themesList[$key]);
+                    $unset++;
+                }
+            }
+        }
+        dd($unset, 'Unset', 1);
+        return $themesList;
+    }
+
+    public function getThemesShortList($isSaveToDB = false)
+    {
+        $this->themesListArray = $this->processor($this->_srcThemesList);
+        //записываем в db если установлен флаг
+        if ($isSaveToDB) {
+            //Создаем новую таблицу в локальной базе данных
+            $this->db->createNewDB();
+            $this->db->setDBThemes($this->themesListArray);
+        }
         return $this->themesListArray;
     }
 
@@ -35,9 +63,6 @@ class ThemeList
 
     private function processor($list)
     {
-        //Создаем новую таблицу в локальной базе данных
-        $this->db->createNewDB();
-
         $themeList = [];
         $other = [];
 
