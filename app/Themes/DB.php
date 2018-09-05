@@ -17,7 +17,8 @@ class DB
     ];
     private $PDOObjectLocal;
     private $themes_table_name = 'themes';
-    private $tickets_table_name = 'ab_tickets';
+//    private $tickets_table_name = 'ab_tickets';
+    private $tickets_table_name = 'cd_tickets';
 
     public function __construct()
     {
@@ -150,9 +151,39 @@ class DB
 
     private function saveThemeToQuestionToDB($questions, $theme_id)
     {
-//        $stmt = $this->PDOObjectLocal->prepare("INSERT INTO {$this->themes_table_name} (_pid,title) VALUES (:_pid,:title)");
-
         $stmt = $this->PDOObjectLocal->prepare("UPDATE {$this->tickets_table_name} SET `__ticket_new_theme_id` = CONCAT_WS('|', `__ticket_new_theme_id`, {$theme_id}) WHERE `bilet` = :biletNumber AND `vopros` = :questNumber");
+
+        $stmt->bindParam(':biletNumber', $biletNumber);
+        $stmt->bindParam(':questNumber', $questNumber);
+
+        foreach ($questions as $item) {
+            $biletNumber = $item->biletNumber;
+            $questNumber = $item->questNumber;
+
+            if (!$stmt->execute()) die('Error! Insert to DB');
+        }
+
+    }
+
+    public function saveLastChangesToDB($questions)
+    {
+        $stmt = $this->PDOObjectLocal->prepare("UPDATE {$this->tickets_table_name} SET `last_changes` = '2018-04-10' WHERE `bilet` = :biletNumber AND `vopros` = :questNumber");
+
+        $stmt->bindParam(':biletNumber', $biletNumber);
+        $stmt->bindParam(':questNumber', $questNumber);
+
+        foreach ($questions as $item) {
+            $biletNumber = $item->biletNumber;
+            $questNumber = $item->questNumber;
+
+            if (!$stmt->execute()) die('Error! Insert to DB');
+        }
+
+    }
+
+    public function saveIsOnlyCDToDB($questions)
+    {
+        $stmt = $this->PDOObjectLocal->prepare("UPDATE {$this->tickets_table_name} SET `is_only_cd` = 1 WHERE `bilet` = :biletNumber AND `vopros` = :questNumber");
 
         $stmt->bindParam(':biletNumber', $biletNumber);
         $stmt->bindParam(':questNumber', $questNumber);

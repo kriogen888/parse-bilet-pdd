@@ -9,7 +9,7 @@ class ThemeWriter
 
     public function __construct()
     {
-        $this->_themeList = new ThemeList('ab');
+        $this->_themeList = new ThemeList('cd');
     }
 
     public function getThemes()
@@ -21,8 +21,7 @@ class ThemeWriter
 
 
 //        dd($this->_themeList->getThemesShortList(false), 'Список тем:', 2);
-
-        dd($this->_themeList->getThemes(true), 'Темы с билетами:', 2);
+        dd($this->_themeList->getThemes(false), 'Темы с билетами:', 2);
 
 
     }

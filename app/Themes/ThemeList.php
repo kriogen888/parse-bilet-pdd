@@ -35,6 +35,7 @@ class ThemeList
                 if ((int)$arr[0] !== 0) {
                     $themesList[$key][0] = $arr[1];
                 } else {
+                    $this->setLastChanges($themesList[$key]);
                     unset($themesList[$key]);
                     $unset++;
                 }
@@ -42,6 +43,22 @@ class ThemeList
         }
         dd($unset, 'Unset', 1);
         return $themesList;
+    }
+
+    private function setLastChanges($changesList)
+    {
+//        dd($changesList, $changesList[0], 2);
+        //раскоментировать для записи последних изменений
+        /*if ($changesList[0] === "0 Изменения с 10 апреля 2018") {
+            dd($changesList, $changesList[0], 2);
+            $this->db->saveLastChangesToDB($changesList[1]);
+        }*/
+
+        //раскоментировать для записи флага только CD вопросов
+        /*if ($changesList[0] === "0 Только CD вопросы, без ABM") {
+            dd($changesList, $changesList[0], 2);
+            $this->db->saveIsOnlyCDToDB($changesList[1]);
+        }*/
     }
 
     public function getThemesShortList($isSaveToDB = false)
